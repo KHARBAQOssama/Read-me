@@ -48,16 +48,14 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/sonar
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: changemeinprod!
-          SPRING_JPA_HIBERNATE_DDL_AUTO: update # or 'update' if you want schema updates
-          SPRING_JPA_SHOW_SQL: true
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb  # Changed to H2
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=KHARBAQOssama_Read-me
 
       - name: Run Tests
         env:
-          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb  # Use H2 for tests
-          SPRING_JPA_HIBERNATE_DDL_AUTO: update
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
           SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
         run: mvn -B test

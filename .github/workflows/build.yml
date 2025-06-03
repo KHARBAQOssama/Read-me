@@ -54,3 +54,10 @@ jobs:
           SPRING_JPA_HIBERNATE_DDL_AUTO: update # or 'update' if you want schema updates
           SPRING_JPA_SHOW_SQL: true
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=KHARBAQOssama_Read-me
+
+      - name: Run Tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb  # Use H2 for tests
+          SPRING_JPA_HIBERNATE_DDL_AUTO: update
+          SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+        run: mvn -B test

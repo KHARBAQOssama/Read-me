@@ -6,6 +6,7 @@ on:
       - develop
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   build:
     name: Build and analyze
@@ -16,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: changemeinprod!
-          POSTGRES_DB: sonar
+          POSTGRES_DB: testdb  # Changed from 'sonar' to 'testdb'
         ports:
           - 5432:5432
         options: >-
@@ -28,34 +29,34 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: 21
           distribution: 'zulu'
+
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb  # Changed to H2
-          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: changemeinprod!
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop  # Changed to create-drop for tests
+          SPRING_JPA_SHOW_SQL: true
           SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=KHARBAQOssama_Read-me
-
-      - name: Run Tests
-        env:
-          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
-          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
-          SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-        run: mvn -B test

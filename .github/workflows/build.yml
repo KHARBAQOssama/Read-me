@@ -51,6 +51,6 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/sonar
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: changemeinprod!
-          SPRING_JPA_HIBERNATE_DDL_AUTO: validate # or 'update' if you want schema updates
+          SPRING_JPA_HIBERNATE_DDL_AUTO: update # or 'update' if you want schema updates
           SPRING_JPA_SHOW_SQL: true
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=KHARBAQOssama_Read-me
